@@ -1,9 +1,12 @@
-import { it, describe, beforeAll, afterAll, expect } from 'vitest'
+import { it, describe, beforeAll, afterAll, expect, beforeEach } from 'vitest'
 import { app } from '@/app'
 import { RegisterUseCase } from '@/use-cases/register'
-import { compare } from 'bcryptjs'
+import { compare } from 'bcrypt'
 import { InMemoryUsersRepositories } from '@/repositories/in-memory/in-memory-users-repository'
 import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error'
+
+let usersRepository: InMemoryUsersRepositories
+let sut: RegisterUseCase
 
 describe('users route', () => {
   beforeAll(async () => {
@@ -14,11 +17,13 @@ describe('users route', () => {
     app.close()
   })
 
-  it('should register a user', async () => {
-    const usersRepository = new InMemoryUsersRepositories()
-    const registerUseCase = new RegisterUseCase(usersRepository)
+  beforeEach(() => {
+    usersRepository = new InMemoryUsersRepositories()
+    sut = new RegisterUseCase(usersRepository)
+  })
 
-    const { user } = await registerUseCase.handle({
+  it('should register a user', async () => {
+    const { user } = await sut.handle({
       name: 'John Doe',
       email: 'john.doe@email.com',
       password: '123johndoe',
@@ -28,10 +33,7 @@ describe('users route', () => {
   })
 
   it('should hash user password upon registration', async () => {
-    const usersRepository = new InMemoryUsersRepositories()
-    const registerUseCase = new RegisterUseCase(usersRepository)
-
-    const { user } = await registerUseCase.handle({
+    const { user } = await sut.handle({
       name: 'John Doe',
       email: 'john.doe@email.com',
       password: '123johndoe',
@@ -46,19 +48,16 @@ describe('users route', () => {
   })
 
   it('should not register a user when email is a duplicate', async () => {
-    const usersRepository = new InMemoryUsersRepositories()
-    const registerUseCase = new RegisterUseCase(usersRepository)
-
     const email = 'john.doe@email.com'
 
-    await registerUseCase.handle({
+    await sut.handle({
       name: 'John Doe',
       email,
       password: '123johndoe',
     })
 
     expect(async () => {
-      await registerUseCase.handle({
+      await sut.handle({
         name: 'John Doe2',
         email,
         password: '123johndoe2',
