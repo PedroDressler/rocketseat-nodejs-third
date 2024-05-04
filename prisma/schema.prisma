@@ -43,8 +43,9 @@ model Gym {
   id          String  @id @default(uuid())
   name        String
   description String?
+  phone       String
   latitude    Decimal
-  logitude    Decimal
+  longitude   Decimal
 
   checkIn CheckIn[]
 

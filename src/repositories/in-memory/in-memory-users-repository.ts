@@ -4,6 +4,16 @@ import { UsersRepositories } from '../users-repository'
 export class InMemoryUsersRepositories implements UsersRepositories {
   public items: User[] = []
 
+  async findById(id: string) {
+    const user = this.items.find((item) => item.id === id)
+
+    if (!user) {
+      return null
+    }
+
+    return user
+  }
+
   async create(data: Prisma.UserCreateInput) {
     const user = {
       id: `user-${this.items.length}`,
