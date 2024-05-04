@@ -1,7 +1,7 @@
 import { CheckIn } from '@prisma/client'
-import { UseCase } from '.'
+import { UseCase } from './use-case'
 import { CheckInRepositories } from '@/repositories/check-ins-repository'
-import { GymsRepository } from '@/repositories/gym-repository'
+import { GymsRepositories } from '@/repositories/gym-repository'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 interface CheckInUseCaseRequest {
@@ -20,11 +20,11 @@ export class CheckInUseCase
 {
   constructor(
     private checkInRepository: CheckInRepositories,
-    private GymsRepository: GymsRepository,
+    private gymsRepository: GymsRepositories,
   ) {}
 
   async handle({ userId, gymId }: CheckInUseCaseRequest) {
-    const gym = await this.GymsRepository.findById(gymId)
+    const gym = await this.gymsRepository.findById(gymId)
 
     if (!gym) {
       throw new ResourceNotFoundError()

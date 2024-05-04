@@ -1,5 +1,5 @@
 import { User } from '@prisma/client'
-import { UseCase } from '.'
+import { UseCase } from './use-case'
 import { UsersRepositories } from '@/repositories/users-repository'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
 

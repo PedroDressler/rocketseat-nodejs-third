@@ -1,5 +1,5 @@
 import { UsersRepositories } from '@/repositories/users-repository'
-import { UseCase } from '.'
+import { UseCase } from './use-case'
 import { InvalidCredentialsError } from './errors/invalid-credentials-error'
 import { compare } from 'bcrypt'
 import { User } from '@prisma/client'

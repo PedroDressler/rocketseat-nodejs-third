@@ -14,7 +14,7 @@ import {
   afterEach,
 } from 'vitest'
 
-let checkInRepository: InMemoryCheckInsRepository
+let checkInsRepository: InMemoryCheckInsRepository
 let gymsRepository: InMemoryGymsRepository
 let sut: CheckInUseCase
 
@@ -27,19 +27,11 @@ describe('get user profile route', () => {
     app.close()
   })
 
-  beforeEach(() => {
-    checkInRepository = new InMemoryCheckInsRepository()
+  beforeEach(async () => {
+    checkInsRepository = new InMemoryCheckInsRepository()
     gymsRepository = new InMemoryGymsRepository()
-    sut = new CheckInUseCase(checkInRepository, gymsRepository)
+    sut = new CheckInUseCase(checkInsRepository, gymsRepository)
 
-    vi.useFakeTimers()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
-  })
-
-  it('should be able to check-in', async () => {
     await gymsRepository.items.push({
       id: 'gym-01',
       name: 'JS Gym',
@@ -49,6 +41,14 @@ describe('get user profile route', () => {
       phone: '123',
     })
 
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('should be able to check-in', async () => {
     const { checkIn } = await sut.handle({
       gymId: 'gym-01',
       userId: 'user-01',
@@ -113,6 +113,17 @@ describe('get user profile route', () => {
 
     vi.setSystemTime(new Date(2022, 0, 21, 8, 0, 0))
 
+    const { checkIn } = await sut.handle({
+      gymId: 'gym-01',
+      userId: 'user-01',
+      gymLatitude: 0,
+      gymLongitude: 0,
+    })
+
+    expect(checkIn.id).toEqual(expect.any(String))
+  })
+
+  it('should be able to check-in', async () => {
     const { checkIn } = await sut.handle({
       gymId: 'gym-01',
       userId: 'user-01',
