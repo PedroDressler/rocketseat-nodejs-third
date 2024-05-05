@@ -8,7 +8,7 @@ import { ResourceAlreadyExistsError } from '@/use-cases/errors/user-already-exis
 let usersRepository: InMemoryUsersRepository
 let sut: RegisterUseCase
 
-describe('users route', () => {
+describe('Register Use Case', () => {
   beforeAll(async () => {
     app.ready()
   })

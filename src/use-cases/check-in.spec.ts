@@ -19,7 +19,7 @@ let checkInsRepository: InMemoryCheckInsRepository
 let gymsRepository: InMemoryGymsRepository
 let sut: CheckInUseCase
 
-describe('check in route', () => {
+describe('Check-In Use Case', () => {
   beforeAll(async () => {
     app.ready()
   })

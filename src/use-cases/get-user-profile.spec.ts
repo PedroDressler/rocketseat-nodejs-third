@@ -8,7 +8,7 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
 let usersRepository: InMemoryUsersRepository
 let sut: GetUserProfileUseCase
 
-describe('get user profile route', () => {
+describe('Get User Profile Use Case', () => {
   beforeAll(async () => {
     app.ready()
   })
