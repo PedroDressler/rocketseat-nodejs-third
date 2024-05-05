@@ -1,11 +1,11 @@
 import { app } from '@/app'
-import { InMemoryUsersRepositories } from '@/repositories/in-memory/in-memory-users-repository'
+import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { AuthenticateUseCase } from '@/use-cases/authenticate'
 import { InvalidCredentialsError } from '@/use-cases/errors/invalid-credentials-error'
 import { hash } from 'bcrypt'
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
 
-let usersRepository: InMemoryUsersRepositories
+let usersRepository: InMemoryUsersRepository
 let sut: AuthenticateUseCase
 
 describe('authentication route', () => {
@@ -18,7 +18,7 @@ describe('authentication route', () => {
   })
 
   beforeEach(() => {
-    usersRepository = new InMemoryUsersRepositories()
+    usersRepository = new InMemoryUsersRepository()
     sut = new AuthenticateUseCase(usersRepository)
   })
 

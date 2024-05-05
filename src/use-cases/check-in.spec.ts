@@ -2,7 +2,6 @@ import { app } from '@/app'
 import { InMemoryCheckInsRepository } from '@/repositories/in-memory/in-memory-check-ins-repository'
 import { InMemoryGymsRepository } from '@/repositories/in-memory/in-memory-gyms-repository'
 import { CheckInUseCase } from '@/use-cases/check-in'
-import { Decimal } from '@prisma/client/runtime/library'
 import {
   describe,
   it,
@@ -13,12 +12,14 @@ import {
   vi,
   afterEach,
 } from 'vitest'
+import { MaxNumberOfCheckIns } from './errors/max-number-of-check-ins'
+import { MaxDistanceError } from './errors/max-distance-error'
 
 let checkInsRepository: InMemoryCheckInsRepository
 let gymsRepository: InMemoryGymsRepository
 let sut: CheckInUseCase
 
-describe('get user profile route', () => {
+describe('check in route', () => {
   beforeAll(async () => {
     app.ready()
   })
@@ -32,13 +33,13 @@ describe('get user profile route', () => {
     gymsRepository = new InMemoryGymsRepository()
     sut = new CheckInUseCase(checkInsRepository, gymsRepository)
 
-    await gymsRepository.items.push({
+    await gymsRepository.create({
       id: 'gym-01',
       name: 'JS Gym',
-      latitude: new Decimal(0),
-      longitude: new Decimal(0),
       description: '',
-      phone: '123',
+      phone: '',
+      latitude: 0,
+      longitude: 0,
     })
 
     vi.useFakeTimers()
@@ -52,8 +53,8 @@ describe('get user profile route', () => {
     const { checkIn } = await sut.handle({
       gymId: 'gym-01',
       userId: 'user-01',
-      gymLatitude: 0,
-      gymLongitude: 0,
+      userLatitude: 0,
+      userLongitude: 0,
     })
 
     expect(checkIn.id).toEqual(expect.any(String))
@@ -65,18 +66,18 @@ describe('get user profile route', () => {
     await sut.handle({
       gymId: 'gym-01',
       userId: 'user-01',
-      gymLatitude: 0,
-      gymLongitude: 0,
+      userLatitude: 0,
+      userLongitude: 0,
     })
 
     expect(async () => {
       await sut.handle({
         gymId: 'gym-01',
         userId: 'user-01',
-        gymLatitude: 0,
-        gymLongitude: 0,
+        userLatitude: 0,
+        userLongitude: 0,
       })
-    }).rejects.toBeInstanceOf(Error)
+    }).rejects.toBeInstanceOf(MaxNumberOfCheckIns)
   })
 
   it('should be able to check-in in the same day buy different year', async () => {
@@ -85,8 +86,8 @@ describe('get user profile route', () => {
     await sut.handle({
       gymId: 'gym-01',
       userId: 'user-01',
-      gymLatitude: 0,
-      gymLongitude: 0,
+      userLatitude: 0,
+      userLongitude: 0,
     })
 
     vi.setSystemTime(new Date(2022, 0, 20, 8, 0, 0))
@@ -94,8 +95,8 @@ describe('get user profile route', () => {
     const { checkIn } = await sut.handle({
       gymId: 'gym-01',
       userId: 'user-01',
-      gymLatitude: 0,
-      gymLongitude: 0,
+      userLatitude: 0,
+      userLongitude: 0,
     })
 
     expect(checkIn.id).toEqual(expect.any(String))
@@ -107,8 +108,8 @@ describe('get user profile route', () => {
     await sut.handle({
       gymId: 'gym-01',
       userId: 'user-01',
-      gymLatitude: 0,
-      gymLongitude: 0,
+      userLatitude: 0,
+      userLongitude: 0,
     })
 
     vi.setSystemTime(new Date(2022, 0, 21, 8, 0, 0))
@@ -116,21 +117,30 @@ describe('get user profile route', () => {
     const { checkIn } = await sut.handle({
       gymId: 'gym-01',
       userId: 'user-01',
-      gymLatitude: 0,
-      gymLongitude: 0,
+      userLatitude: 0,
+      userLongitude: 0,
     })
 
     expect(checkIn.id).toEqual(expect.any(String))
   })
 
-  it('should be able to check-in', async () => {
-    const { checkIn } = await sut.handle({
-      gymId: 'gym-01',
-      userId: 'user-01',
-      gymLatitude: 0,
-      gymLongitude: 0,
+  it('should not be able to check in on distant gym', async () => {
+    await gymsRepository.create({
+      id: 'gym-02',
+      name: 'Java Gym',
+      description: '',
+      phone: '123',
+      latitude: -19.8413127,
+      longitude: -43.8098526,
     })
 
-    expect(checkIn.id).toEqual(expect.any(String))
+    expect(async () => {
+      await sut.handle({
+        gymId: 'gym-02',
+        userId: 'user-01',
+        userLatitude: -19.712896,
+        userLongitude: -44.0420834,
+      })
+    }).rejects.toBeInstanceOf(MaxDistanceError)
   })
 })

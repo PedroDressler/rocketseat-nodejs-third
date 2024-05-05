@@ -3,12 +3,15 @@ import { UseCase } from './use-case'
 import { CheckInRepositories } from '@/repositories/check-ins-repository'
 import { GymsRepositories } from '@/repositories/gym-repository'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
+import { getDistanceBetweenCoordinates } from '@/utils/get-distance-between-coordinates'
+import { MaxNumberOfCheckIns } from './errors/max-number-of-check-ins'
+import { MaxDistanceError } from './errors/max-distance-error'
 
 interface CheckInUseCaseRequest {
   userId: string
   gymId: string
-  gymLatitude: number
-  gymLongitude: number
+  userLatitude: number
+  userLongitude: number
 }
 
 interface CheckInUseCaseResponse {
@@ -23,14 +26,34 @@ export class CheckInUseCase
     private gymsRepository: GymsRepositories,
   ) {}
 
-  async handle({ userId, gymId }: CheckInUseCaseRequest) {
+  async handle({
+    userId,
+    gymId,
+    userLatitude,
+    userLongitude,
+  }: CheckInUseCaseRequest) {
     const gym = await this.gymsRepository.findById(gymId)
 
     if (!gym) {
       throw new ResourceNotFoundError()
     }
 
-    // calculate gyn distance
+    const distance = getDistanceBetweenCoordinates(
+      {
+        latitude: userLatitude,
+        longitude: userLongitude,
+      },
+      {
+        latitude: gym.latitude.toNumber(),
+        longitude: gym.longitude.toNumber(),
+      },
+    )
+
+    const MAX_DISTANCE_IN_KILOMETERS = 0.1
+
+    if (distance > MAX_DISTANCE_IN_KILOMETERS) {
+      throw new MaxDistanceError()
+    }
 
     const checkInOnSameDay = await this.checkInRepository.findByUserIdOnDate(
       userId,
@@ -38,7 +61,7 @@ export class CheckInUseCase
     )
 
     if (checkInOnSameDay) {
-      throw new Error()
+      throw new MaxNumberOfCheckIns()
     }
 
     const checkIn = await this.checkInRepository.create({

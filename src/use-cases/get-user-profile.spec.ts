@@ -1,11 +1,11 @@
 import { app } from '@/app'
-import { InMemoryUsersRepositories } from '@/repositories/in-memory/in-memory-users-repository'
+import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { ResourceNotFoundError } from '@/use-cases/errors/resource-not-found-error'
 import { GetUserProfileUseCase } from '@/use-cases/get-user-profile'
 import { hash } from 'bcrypt'
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
 
-let usersRepository: InMemoryUsersRepositories
+let usersRepository: InMemoryUsersRepository
 let sut: GetUserProfileUseCase
 
 describe('get user profile route', () => {
@@ -18,7 +18,7 @@ describe('get user profile route', () => {
   })
 
   beforeEach(() => {
-    usersRepository = new InMemoryUsersRepositories()
+    usersRepository = new InMemoryUsersRepository()
     sut = new GetUserProfileUseCase(usersRepository)
   })
 

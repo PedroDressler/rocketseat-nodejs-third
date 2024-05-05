@@ -2,10 +2,10 @@ import { it, describe, beforeAll, afterAll, expect, beforeEach } from 'vitest'
 import { app } from '@/app'
 import { RegisterUseCase } from '@/use-cases/register'
 import { compare } from 'bcrypt'
-import { InMemoryUsersRepositories } from '@/repositories/in-memory/in-memory-users-repository'
-import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error'
+import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
+import { ResourceAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error'
 
-let usersRepository: InMemoryUsersRepositories
+let usersRepository: InMemoryUsersRepository
 let sut: RegisterUseCase
 
 describe('users route', () => {
@@ -18,7 +18,7 @@ describe('users route', () => {
   })
 
   beforeEach(() => {
-    usersRepository = new InMemoryUsersRepositories()
+    usersRepository = new InMemoryUsersRepository()
     sut = new RegisterUseCase(usersRepository)
   })
 
@@ -62,6 +62,6 @@ describe('users route', () => {
         email,
         password: '123johndoe2',
       })
-    }).rejects.toBeInstanceOf(UserAlreadyExistsError)
+    }).rejects.toBeInstanceOf(ResourceAlreadyExistsError)
   })
 })
