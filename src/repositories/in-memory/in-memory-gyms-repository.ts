@@ -51,8 +51,6 @@ export class InMemoryGymsRepository implements GymsRepositories {
         },
       )
 
-      console.log(distance)
-
       const MAX_DISTANCE_NEARBY_USER = 10
 
       return distance < MAX_DISTANCE_NEARBY_USER
