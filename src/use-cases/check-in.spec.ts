@@ -1,17 +1,7 @@
-import { app } from '@/app'
 import { InMemoryCheckInsRepository } from '@/repositories/in-memory/in-memory-check-ins-repository'
 import { InMemoryGymsRepository } from '@/repositories/in-memory/in-memory-gyms-repository'
 import { CheckInUseCase } from '@/use-cases/check-in'
-import {
-  describe,
-  it,
-  expect,
-  beforeAll,
-  afterAll,
-  beforeEach,
-  vi,
-  afterEach,
-} from 'vitest'
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { MaxNumberOfCheckIns } from './errors/max-number-of-check-ins'
 import { MaxDistanceError } from './errors/max-distance-error'
 
@@ -20,14 +10,6 @@ let gymsRepository: InMemoryGymsRepository
 let sut: CheckInUseCase
 
 describe('Check-In Use Case', () => {
-  beforeAll(async () => {
-    app.ready()
-  })
-
-  afterAll(async () => {
-    app.close()
-  })
-
   beforeEach(async () => {
     checkInsRepository = new InMemoryCheckInsRepository()
     gymsRepository = new InMemoryGymsRepository()

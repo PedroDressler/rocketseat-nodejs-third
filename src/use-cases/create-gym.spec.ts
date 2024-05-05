@@ -1,5 +1,4 @@
-import { it, describe, beforeAll, afterAll, expect, beforeEach } from 'vitest'
-import { app } from '@/app'
+import { it, describe, expect, beforeEach } from 'vitest'
 import { InMemoryGymsRepository } from '@/repositories/in-memory/in-memory-gyms-repository'
 import { CreateGymUseCase } from './create-gym'
 
@@ -7,14 +6,6 @@ let gymRepository: InMemoryGymsRepository
 let sut: CreateGymUseCase
 
 describe('Create Gym Use Case', () => {
-  beforeAll(async () => {
-    app.ready()
-  })
-
-  afterAll(async () => {
-    app.close()
-  })
-
   beforeEach(() => {
     gymRepository = new InMemoryGymsRepository()
     sut = new CreateGymUseCase(gymRepository)

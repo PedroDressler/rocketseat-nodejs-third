@@ -1,20 +1,11 @@
-import { app } from '@/app'
 import { InMemoryCheckInsRepository } from '@/repositories/in-memory/in-memory-check-ins-repository'
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { GetUserMetricsUseCase } from './get-user-metrics'
 
 let checkInsRepository: InMemoryCheckInsRepository
 let sut: GetUserMetricsUseCase
 
 describe('Get User Metrics Use Case', () => {
-  beforeAll(async () => {
-    app.ready()
-  })
-
-  afterAll(async () => {
-    app.close()
-  })
-
   beforeEach(async () => {
     checkInsRepository = new InMemoryCheckInsRepository()
     sut = new GetUserMetricsUseCase(checkInsRepository)

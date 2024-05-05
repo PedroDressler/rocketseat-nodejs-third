@@ -1,22 +1,13 @@
-import { app } from '@/app'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { AuthenticateUseCase } from '@/use-cases/authenticate'
 import { InvalidCredentialsError } from '@/use-cases/errors/invalid-credentials-error'
 import { hash } from 'bcrypt'
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 
 let usersRepository: InMemoryUsersRepository
 let sut: AuthenticateUseCase
 
 describe('Authentication Use Case', () => {
-  beforeAll(async () => {
-    app.ready()
-  })
-
-  afterAll(async () => {
-    app.close()
-  })
-
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
     sut = new AuthenticateUseCase(usersRepository)

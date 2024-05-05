@@ -1,22 +1,13 @@
-import { app } from '@/app'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { ResourceNotFoundError } from '@/use-cases/errors/resource-not-found-error'
 import { GetUserProfileUseCase } from '@/use-cases/get-user-profile'
 import { hash } from 'bcrypt'
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 
 let usersRepository: InMemoryUsersRepository
 let sut: GetUserProfileUseCase
 
 describe('Get User Profile Use Case', () => {
-  beforeAll(async () => {
-    app.ready()
-  })
-
-  afterAll(async () => {
-    app.close()
-  })
-
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
     sut = new GetUserProfileUseCase(usersRepository)

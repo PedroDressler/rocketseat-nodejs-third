@@ -1,5 +1,4 @@
-import { it, describe, beforeAll, afterAll, expect, beforeEach } from 'vitest'
-import { app } from '@/app'
+import { it, describe, expect, beforeEach } from 'vitest'
 import { RegisterUseCase } from '@/use-cases/register'
 import { compare } from 'bcrypt'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
@@ -9,14 +8,6 @@ let usersRepository: InMemoryUsersRepository
 let sut: RegisterUseCase
 
 describe('Register Use Case', () => {
-  beforeAll(async () => {
-    app.ready()
-  })
-
-  afterAll(async () => {
-    app.close()
-  })
-
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
     sut = new RegisterUseCase(usersRepository)
