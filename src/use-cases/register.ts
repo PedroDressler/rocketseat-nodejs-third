@@ -1,6 +1,6 @@
 import { hash } from 'bcrypt'
 import { UsersRepositories } from '@/repositories/users-repository'
-import { ResourceAlreadyExistsError } from './errors/user-already-exists-error'
+import { ResourceAlreadyExistsError } from './errors/resource-already-exists'
 import { User } from '@prisma/client'
 import { UseCase } from './use-case'
 
